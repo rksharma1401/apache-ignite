@@ -6,13 +6,11 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
-import org.apache.ignite.cache.CacheMode;
-import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder;
 
-public class IgnitClient {
+public class IgnitClient implements Runnable {
 	private static final String MY_CACHE = "myCache";
 
 	public static void main(String[] args) throws IgniteException {
@@ -44,9 +42,9 @@ public class IgnitClient {
 		System.out.println(">> Compute task is executed, check for output on the server nodes.");
 
 		int i = 0;
-		while (i < 20) {
+		while (i < 5000) {
 
-			System.out.println(cache.get("1") +" " + cache.get("2"));
+			System.out.println("Reader for cahce :- " +cache.get("1") +" " + cache.get("2"));
 			try {
 				i++;
 				Thread.sleep(1000l);
@@ -56,5 +54,11 @@ public class IgnitClient {
 		}
 		// Disconnect from the cluster.
 		ignite.close();
+	}
+
+	@Override
+	public void run() {
+		main(null);
+		
 	}
 }

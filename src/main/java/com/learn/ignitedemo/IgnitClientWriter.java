@@ -16,6 +16,7 @@ public class IgnitClientWriter {
 	private static final String MY_CACHE = "myCache";
 
 	public static void main(String[] args) throws IgniteException {
+
 		// Preparing IgniteConfiguration using Java APIs
 		IgniteConfiguration cfg = new IgniteConfiguration();
 
@@ -26,7 +27,7 @@ public class IgnitClientWriter {
 		cfg.setPeerClassLoadingEnabled(true);
 
 		// set working directory
-		cfg.setWorkDirectory("/home/WORLDPAY.LOCAL/sharmar250/tools/apache-ignite-2.9.1-bin/w");
+		// cfg.setWorkDirectory("/home/WORLDPAY.LOCAL/sharmar250/tools/apache-ignite-2.9.1-bin/w");
 
 		// Setting up an IP Finder to ensure the client can locate the servers.
 		TcpDiscoveryMulticastIpFinder ipFinder = new TcpDiscoveryMulticastIpFinder();

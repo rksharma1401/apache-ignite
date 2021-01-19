@@ -85,26 +85,19 @@ public class IgniteApp {
 
 			System.out.println(">> Created the cache and add the values.");
 
-			// Executing custom Java compute task on server nodes.
-			ignite.compute(ignite.cluster().forServers()).broadcast(new RemoteTask());
 
+			 
+
+//			Thread thread = new Thread(new IgnitClient());
+//			thread.start();
+			
+			
+
+			// Executing custom Java compute task on server nodes.
+			ignite.compute(ignite.cluster().forServers()).broadcast(new RemoteTask());		 
 			System.out.println(">> Compute task is executed, check for output on the server nodes.");
 
-			Runnable runnable = () -> {
-				IgnitClient.main(args);
-			};
-
-			Thread thread = new Thread(runnable);
-			thread.start();
 			
-			
-			Runnable runnableWriter = () -> {
-				IgnitClientWriter.main(args);
-			};
-
-			Thread threadWriter = new Thread(runnableWriter);
-			threadWriter.start();
-
 			try {
 				Thread.sleep(1000 * 1000L);
 			} catch (InterruptedException e) {
