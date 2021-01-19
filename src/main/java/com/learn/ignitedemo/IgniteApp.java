@@ -1,7 +1,6 @@
 package com.learn.ignitedemo;
 
 import java.util.Collections;
-import java.util.Scanner;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -19,6 +18,9 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMultic
 public class IgniteApp {
 
 	private static final String MY_CACHE = "myCache";
+	static {
+		System.setProperty("IGNITE_JETTY_PORT", System.getProperty("PORT"));
+	}
 
 	public static void main(String[] args) {
 		try {
@@ -105,9 +107,9 @@ public class IgniteApp {
 				System.out.println(">> Executing the compute task");
 				System.out.println("   Node ID: " + ignite.cluster().localNode().id() + "\n" + "   OS: " + System.getProperty("os.name") + "   JRE: " + System.getProperty("java.runtime.name"));
 				IgniteCache<Integer, String> cache = ignite.cache("newCache");
-				
+
 				cache.forEach(e -> System.out.println(e.getKey() + ":" + e.getValue()));
-				
+
 				try {
 					Thread.sleep(5000l);
 				} catch (InterruptedException e) {
