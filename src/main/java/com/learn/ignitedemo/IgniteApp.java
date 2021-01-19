@@ -15,6 +15,8 @@ import org.apache.ignite.resources.IgniteInstanceResource;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder;
 
+import com.learn.ignitedemo.objects.StringObjects;
+
 public class IgniteApp {
 
 	private static final String MY_CACHE = "myCache";
@@ -85,19 +87,28 @@ public class IgniteApp {
 
 			System.out.println(">> Created the cache and add the values.");
 
+			// Cache configuration to set properties of cache
+			CacheConfiguration<String, StringObjects> objCacheCfg = new CacheConfiguration<>();
+			objCacheCfg.setCacheMode(CacheMode.REPLICATED);
+			objCacheCfg.setName("objCache");
+			objCacheCfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL_SNAPSHOT);
 
-			 
+			ignite.addCacheConfiguration(objCacheCfg);
+
+			// Create an IgniteCache and put some values in it.
+			IgniteCache<String, StringObjects> objectCache = ignite.getOrCreateCache(objCacheCfg);
+
+			objectCache.put("abc", new StringObjects("abc","alpha","DB"));
+
+			System.out.println(">> Created the cache and add the values.");
 
 //			Thread thread = new Thread(new IgnitClient());
 //			thread.start();
-			
-			
 
 			// Executing custom Java compute task on server nodes.
-			ignite.compute(ignite.cluster().forServers()).broadcast(new RemoteTask());		 
+			ignite.compute(ignite.cluster().forServers()).broadcast(new RemoteTask());
 			System.out.println(">> Compute task is executed, check for output on the server nodes.");
 
-			
 			try {
 				Thread.sleep(1000 * 1000L);
 			} catch (InterruptedException e) {
@@ -115,6 +126,7 @@ public class IgniteApp {
 	 * shows how to access data stored in a cache from the compute task.
 	 */
 	private static class RemoteTask implements IgniteRunnable {
+		private static final String OBJ_CACHE = "objCache";
 		private static final long serialVersionUID = 1L;
 		@IgniteInstanceResource
 		Ignite ignite;
@@ -124,10 +136,16 @@ public class IgniteApp {
 			while (true) {
 				System.out.println(">> Executing the compute task");
 				System.out.println("   Node ID: " + ignite.cluster().localNode().id() + "\n" + "   OS: " + System.getProperty("os.name") + "   JRE: " + System.getProperty("java.runtime.name"));
+				
+				System.out.println(">>>  newCache");
 				IgniteCache<Integer, String> cache = ignite.cache("newCache");
 
 				cache.forEach(e -> System.out.println(e.getKey() + ":" + e.getValue()));
 
+				System.out.println(">>>  OBJ_CACHE");
+				IgniteCache<Integer, StringObjects> cache2 = ignite.cache(OBJ_CACHE);
+
+				cache2.forEach(e -> System.out.println(e.getKey() + ":" + e.getValue()));
 				try {
 					Thread.sleep(5000l);
 				} catch (InterruptedException e) {

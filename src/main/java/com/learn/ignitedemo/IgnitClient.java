@@ -10,8 +10,10 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder;
 
+import com.learn.ignitedemo.objects.StringObjects;
+
 public class IgnitClient implements Runnable {
-	private static final String MY_CACHE = "myCache";
+	private static final String OBJ_CACHE = "objCache";
 
 	public static void main(String[] args) throws IgniteException {
 		// Preparing IgniteConfiguration using Java APIs
@@ -35,16 +37,16 @@ public class IgnitClient implements Runnable {
 		Ignite ignite = Ignition.start(cfg);
 
 		// get an IgniteCache
-		IgniteCache<String, String> cache = ignite.cache(MY_CACHE);
+		IgniteCache<String, StringObjects> cache = ignite.cache(OBJ_CACHE);
 
-		System.out.println(">> Created the cache and add the values.");
+		System.out.println(">> get the cache ");
 
-		System.out.println(">> Compute task is executed, check for output on the server nodes.");
-
+		
+		cache.put("xyz", new StringObjects("xyz", "alpha", "client"));
 		int i = 0;
 		while (i < 5000) {
-
-			System.out.println("Reader for cahce :- " +cache.get("1") +" " + cache.get("2"));
+			System.out.println(">> Printing cache value");
+			cache.forEach(e -> System.out.println(e.getKey() + ":" + e.getValue()));
 			try {
 				i++;
 				Thread.sleep(1000l);
@@ -59,6 +61,6 @@ public class IgnitClient implements Runnable {
 	@Override
 	public void run() {
 		main(null);
-		
+
 	}
 }
