@@ -20,68 +20,74 @@ public class IgniteApp {
 
 	private static final String MY_CACHE = "myCache";
 
-	public static void main(String[] args) throws IgniteException {
-		// Preparing IgniteConfiguration using Java APIs
-		IgniteConfiguration cfg = new IgniteConfiguration();
+	public static void main(String[] args) {
+		try {
+			// Preparing IgniteConfiguration using Java APIs
+			IgniteConfiguration cfg = new IgniteConfiguration();
 
-		// The node will be started as a client node.
-		// cfg.setClientMode(true);
+			// The node will be started as a client node.
+			// cfg.setClientMode(true);
 
-		// Classes of custom Java logic will be transferred over the wire from this app.
-		 cfg.setPeerClassLoadingEnabled(true);
+			// Classes of custom Java logic will be transferred over the wire from this app.
+			cfg.setPeerClassLoadingEnabled(true);
 
-		// set working directory
-		//cfg.setWorkDirectory("/home/WORLDPAY.LOCAL/sharmar250/tools/apache-ignite-2.9.1-bin/work");
+			// set working directory
+			// cfg.setWorkDirectory("/home/WORLDPAY.LOCAL/sharmar250/tools/apache-ignite-2.9.1-bin/work");
 
-		// Setting up an IP Finder to ensure the client can locate the servers.
-		TcpDiscoveryMulticastIpFinder ipFinder = new TcpDiscoveryMulticastIpFinder();
-		ipFinder.setAddresses(Collections.singletonList("127.0.0.1:47500..47509"));
-		cfg.setDiscoverySpi(new TcpDiscoverySpi().setIpFinder(ipFinder));
+			// Setting up an IP Finder to ensure the client can locate the servers.
+			TcpDiscoveryMulticastIpFinder ipFinder = new TcpDiscoveryMulticastIpFinder();
+			ipFinder.setAddresses(Collections.singletonList("127.0.0.1:47500..47509"));
+			cfg.setDiscoverySpi(new TcpDiscoverySpi().setIpFinder(ipFinder));
 
-		// Starting the node
-		Ignite ignite = Ignition.start(cfg);
+			// Starting the node
+			Ignite ignite = Ignition.start(cfg);
 
-		// Cache configuration to set properties of cache
-		CacheConfiguration<Integer, String> cacheCfg = new CacheConfiguration<>();
-		cacheCfg.setCacheMode(CacheMode.REPLICATED);
-		cacheCfg.setName(MY_CACHE);
-		cacheCfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL_SNAPSHOT);
+			// Cache configuration to set properties of cache
+			CacheConfiguration<Integer, String> cacheCfg = new CacheConfiguration<>();
+			cacheCfg.setCacheMode(CacheMode.REPLICATED);
+			cacheCfg.setName(MY_CACHE);
+			cacheCfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL_SNAPSHOT);
 
-		ignite.addCacheConfiguration(cacheCfg);
+			ignite.addCacheConfiguration(cacheCfg);
 
-		// Create an IgniteCache and put some values in it.
-		IgniteCache<Integer, String> cache = ignite.getOrCreateCache(cacheCfg);
+			// Create an IgniteCache and put some values in it.
+			IgniteCache<Integer, String> cache = ignite.getOrCreateCache(cacheCfg);
 
-		cache.put(1, "Hello");
-		cache.put(2, "World!");
+			cache.put(1, "Hello");
+			cache.put(2, "World!");
 
-		System.out.println(">> Created the cache and add the values.");
+			System.out.println(">> Created the cache and add the values.");
 
-		// Cache configuration to set properties of cache
-		CacheConfiguration<String, String> strCacheCfg = new CacheConfiguration<>();
-		strCacheCfg.setCacheMode(CacheMode.REPLICATED);
-		strCacheCfg.setName("newCache");
-		strCacheCfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL_SNAPSHOT);
+			// Cache configuration to set properties of cache
+			CacheConfiguration<String, String> strCacheCfg = new CacheConfiguration<>();
+			strCacheCfg.setCacheMode(CacheMode.REPLICATED);
+			strCacheCfg.setName("newCache");
+			strCacheCfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL_SNAPSHOT);
 
-		ignite.addCacheConfiguration(strCacheCfg);
+			ignite.addCacheConfiguration(strCacheCfg);
 
-		// Create an IgniteCache and put some values in it.
-		IgniteCache<String, String> strCache = ignite.getOrCreateCache(strCacheCfg);
+			// Create an IgniteCache and put some values in it.
+			IgniteCache<String, String> strCache = ignite.getOrCreateCache(strCacheCfg);
 
-		strCache.put("testKey", "Hello");
+			strCache.put("testKey", "Hello");
 
-		System.out.println(">> Created the cache and add the values.");
+			System.out.println(">> Created the cache and add the values.");
 
-		// Executing custom Java compute task on server nodes.
-		//ignite.compute(ignite.cluster().forServers()).broadcast(new RemoteTask());
+			// Executing custom Java compute task on server nodes.
+			ignite.compute(ignite.cluster().forServers()).broadcast(new RemoteTask());
 
-		System.out.println(">> Compute task is executed, check for output on the server nodes.");
-		Scanner scanner = new Scanner(System.in);
-		String line = scanner.nextLine();
+			System.out.println(">> Compute task is executed, check for output on the server nodes.");
 
-		System.out.printf("User input was: %s%n", line);
-		// Disconnect from the cluster.
-		ignite.close();
+			try {
+				Thread.sleep(1000 * 1000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			// Disconnect from the cluster.
+			ignite.close();
+		} catch (IgniteException e) {
+		}
 	}
 
 	/**
@@ -96,12 +102,12 @@ public class IgniteApp {
 		@Override
 		public void run() {
 			while (true) {
-				// System.out.println(">> Executing the compute task");
+				System.out.println(">> Executing the compute task");
 				System.out.println("   Node ID: " + ignite.cluster().localNode().id() + "\n" + "   OS: " + System.getProperty("os.name") + "   JRE: " + System.getProperty("java.runtime.name"));
 				IgniteCache<Integer, String> cache = ignite.cache(MY_CACHE);
 				System.out.println(">> " + cache.get(1) + " " + cache.get(2));
 				try {
-					Thread.sleep(2000l);
+					Thread.sleep(5000l);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

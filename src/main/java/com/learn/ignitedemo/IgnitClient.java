@@ -23,7 +23,7 @@ public class IgnitClient {
 		cfg.setClientMode(true);
 
 		// Classes of custom Java logic will be transferred over the wire from this app.
-		//cfg.setPeerClassLoadingEnabled(true);
+		cfg.setPeerClassLoadingEnabled(true);
 
 		// set working directory
 		cfg.setWorkDirectory("/home/WORLDPAY.LOCAL/sharmar250/tools/apache-ignite-2.9.1-bin/w");
