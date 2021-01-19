@@ -104,8 +104,10 @@ public class IgniteApp {
 			while (true) {
 				System.out.println(">> Executing the compute task");
 				System.out.println("   Node ID: " + ignite.cluster().localNode().id() + "\n" + "   OS: " + System.getProperty("os.name") + "   JRE: " + System.getProperty("java.runtime.name"));
-				IgniteCache<Integer, String> cache = ignite.cache(MY_CACHE);
-				System.out.println(">> " + cache.get(1) + " " + cache.get(2));
+				IgniteCache<Integer, String> cache = ignite.cache("newCache");
+				
+				cache.forEach(e -> System.out.println(e.getKey() + ":" + e.getValue()));
+				
 				try {
 					Thread.sleep(5000l);
 				} catch (InterruptedException e) {
