@@ -37,19 +37,19 @@ public class IgnitClientWriter {
 		Ignite ignite = Ignition.start(cfg);
 
 		// Cache configuration to set properties of cache
-		CacheConfiguration<Integer, String> cacheCfg = new CacheConfiguration<>();
+		CacheConfiguration<String, String> cacheCfg = new CacheConfiguration<>();
 		cacheCfg.setCacheMode(CacheMode.REPLICATED);
 		cacheCfg.setName(MY_CACHE);
 		ignite.addCacheConfiguration(cacheCfg);
 
 		// Create an IgniteCache and put some values in it.
-		IgniteCache<Integer, String> cache = ignite.getOrCreateCache(cacheCfg);
+		IgniteCache<String, String> cache = ignite.getOrCreateCache(cacheCfg);
 
 		System.out.println(">> Created the cache and now add the values.");
 		int i = 0;
-		while (i < 5) {
+		while (i < 5000) {
 
-			cache.put(1, i + " Hello");
+			cache.put("1", i + " Hello");
 			try {
 				i++;
 				Thread.sleep(1000l);

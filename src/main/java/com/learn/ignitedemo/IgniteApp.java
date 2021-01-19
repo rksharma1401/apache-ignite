@@ -55,7 +55,7 @@ public class IgniteApp {
 			Ignite ignite = Ignition.start(cfg);
 
 			// Cache configuration to set properties of cache
-			CacheConfiguration<Integer, String> cacheCfg = new CacheConfiguration<>();
+			CacheConfiguration<String, String> cacheCfg = new CacheConfiguration<>();
 			cacheCfg.setCacheMode(CacheMode.REPLICATED);
 			cacheCfg.setName(MY_CACHE);
 			cacheCfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL_SNAPSHOT);
@@ -63,10 +63,10 @@ public class IgniteApp {
 			ignite.addCacheConfiguration(cacheCfg);
 
 			// Create an IgniteCache and put some values in it.
-			IgniteCache<Integer, String> cache = ignite.getOrCreateCache(cacheCfg);
+			IgniteCache<String, String> cache = ignite.getOrCreateCache(cacheCfg);
 
-			cache.put(1, "Hello");
-			cache.put(2, "World!");
+			cache.put("1", "Hello");
+			cache.put("2", "World!");
 
 			System.out.println(">> Created the cache and add the values.");
 
@@ -89,6 +89,21 @@ public class IgniteApp {
 			ignite.compute(ignite.cluster().forServers()).broadcast(new RemoteTask());
 
 			System.out.println(">> Compute task is executed, check for output on the server nodes.");
+
+			Runnable runnable = () -> {
+				IgnitClient.main(args);
+			};
+
+			Thread thread = new Thread(runnable);
+			thread.start();
+			
+			
+			Runnable runnableWriter = () -> {
+				IgnitClientWriter.main(args);
+			};
+
+			Thread threadWriter = new Thread(runnableWriter);
+			threadWriter.start();
 
 			try {
 				Thread.sleep(1000 * 1000L);

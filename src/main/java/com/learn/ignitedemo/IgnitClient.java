@@ -37,7 +37,7 @@ public class IgnitClient {
 		Ignite ignite = Ignition.start(cfg);
 
 		// get an IgniteCache
-		IgniteCache<Integer, String> cache = ignite.cache(MY_CACHE);
+		IgniteCache<String, String> cache = ignite.cache(MY_CACHE);
 
 		System.out.println(">> Created the cache and add the values.");
 
@@ -46,7 +46,7 @@ public class IgnitClient {
 		int i = 0;
 		while (i < 20) {
 
-			System.out.println(cache.get(1) +" " + cache.get(2));
+			System.out.println(cache.get("1") +" " + cache.get("2"));
 			try {
 				i++;
 				Thread.sleep(1000l);
