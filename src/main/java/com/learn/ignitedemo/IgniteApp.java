@@ -19,7 +19,13 @@ public class IgniteApp {
 
 	private static final String MY_CACHE = "myCache";
 	static {
-		System.setProperty("IGNITE_JETTY_PORT", System.getProperty("PORT"));
+		System.setProperty("IGNITE_JETTY_HOST", "0.0.0.0");
+		if (System.getProperty("PORT") != null)
+			System.setProperty("IGNITE_JETTY_PORT", System.getProperty("PORT"));
+		else if (System.getProperty("$PORT") != null)
+			System.setProperty("IGNITE_JETTY_PORT", System.getProperty("$PORT"));
+		else
+			System.setProperty("IGNITE_JETTY_PORT", "8080");
 	}
 
 	public static void main(String[] args) {
